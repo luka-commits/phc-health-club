@@ -1,15 +1,8 @@
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
 import { getDBUser } from '@/lib/supabase/auth';
 import { createClient } from '@/lib/supabase/server';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { PageHeader } from '@/components/shared/page-header';
-import { EmptyState } from '@/components/shared/empty-state';
-import { Users, Search, ChevronRight } from 'lucide-react';
+import { PatientList, PatientListItem } from '@/components/provider/patient-list';
 
 export default async function PatientsPage() {
   const { user, error } = await getDBUser();
@@ -18,125 +11,141 @@ export default async function PatientsPage() {
     redirect('/login');
   }
 
-  if (user.role !== 'provider') {
+  // Allow both providers and admins to access this page
+  if (user.role !== 'provider' && user.role !== 'admin') {
     redirect(`/${user.role}`);
   }
 
   const supabase = await createClient();
 
-  // Get provider record
-  const { data: provider } = await supabase
-    .from('providers')
-    .select('id')
-    .eq('user_id', user.id)
-    .single();
+  // Get provider record if user is a provider
+  let provider = null;
+  let showAllPatients = false;
 
-  // Get patients assigned to this provider via treatment plans
-  const { data: treatmentPlans } = await supabase
-    .from('treatment_plans')
-    .select(`
-      id,
-      status,
-      updated_at,
-      patients(
+  if (user.role === 'provider') {
+    const { data: providerData } = await supabase
+      .from('providers')
+      .select('id, license_type')
+      .eq('user_id', user.id)
+      .single();
+    provider = providerData;
+
+    // MD providers see all patients
+    showAllPatients = provider?.license_type === 'MD';
+  } else if (user.role === 'admin') {
+    // Admins always see all patients
+    showAllPatients = true;
+  }
+
+  let patients: PatientListItem[] = [];
+
+  if (showAllPatients) {
+    // MD/Admin: Fetch ALL patients
+    const { data: allPatients } = await supabase
+      .from('patients')
+      .select(`
         id,
         intake_completed,
+        created_at,
         users(first_name, last_name, email, avatar_url, phone)
-      )
-    `)
-    .eq('provider_id', provider?.id)
-    .order('updated_at', { ascending: false });
+      `)
+      .order('created_at', { ascending: false });
 
-  // Get unique patients
-  const patientsMap = new Map();
-  treatmentPlans?.forEach((plan) => {
-    // patients is a single object due to the FK relationship
-    const patientData = plan.patients as unknown as {
-      id: string;
-      intake_completed: boolean;
-      users: { first_name: string; last_name: string; email: string; avatar_url: string | null; phone: string | null };
-    } | null;
-    if (patientData && !patientsMap.has(patientData.id)) {
-      patientsMap.set(patientData.id, {
-        ...patientData,
-        treatmentPlanStatus: plan.status,
-        lastUpdated: plan.updated_at,
-      });
-    }
-  });
-  const patients = Array.from(patientsMap.values());
+    // Get treatment plan status for each patient (if any)
+    const patientIds = allPatients?.map(p => p.id) || [];
+    const { data: treatmentPlans } = await supabase
+      .from('treatment_plans')
+      .select('patient_id, status, updated_at')
+      .in('patient_id', patientIds)
+      .order('updated_at', { ascending: false });
+
+    // Create a map of patient_id to latest treatment plan
+    const treatmentPlanMap = new Map<string, { status: string; updated_at: string }>();
+    treatmentPlans?.forEach((plan) => {
+      if (!treatmentPlanMap.has(plan.patient_id)) {
+        treatmentPlanMap.set(plan.patient_id, { status: plan.status, updated_at: plan.updated_at });
+      }
+    });
+
+    // Transform to PatientListItem format
+    patients = (allPatients || []).map((patient) => {
+      const userData = patient.users as unknown as {
+        first_name: string;
+        last_name: string;
+        email: string;
+        avatar_url: string | null;
+        phone: string | null;
+      };
+      const treatmentPlan = treatmentPlanMap.get(patient.id);
+
+      return {
+        id: patient.id,
+        firstName: userData?.first_name || '',
+        lastName: userData?.last_name || '',
+        email: userData?.email || '',
+        avatarUrl: userData?.avatar_url || null,
+        phone: userData?.phone || null,
+        intakeCompleted: patient.intake_completed,
+        treatmentPlanStatus: treatmentPlan?.status || null,
+        lastUpdated: treatmentPlan?.updated_at || patient.created_at,
+      };
+    });
+  } else {
+    // PA/NP: Fetch only assigned patients via treatment plans
+    const { data: treatmentPlans } = await supabase
+      .from('treatment_plans')
+      .select(`
+        id,
+        status,
+        updated_at,
+        patients(
+          id,
+          intake_completed,
+          users(first_name, last_name, email, avatar_url, phone)
+        )
+      `)
+      .eq('provider_id', provider?.id)
+      .order('updated_at', { ascending: false });
+
+    // Get unique patients
+    const patientsMap = new Map<string, PatientListItem>();
+    treatmentPlans?.forEach((plan) => {
+      const patientData = plan.patients as unknown as {
+        id: string;
+        intake_completed: boolean;
+        users: { first_name: string; last_name: string; email: string; avatar_url: string | null; phone: string | null };
+      } | null;
+
+      if (patientData && !patientsMap.has(patientData.id)) {
+        patientsMap.set(patientData.id, {
+          id: patientData.id,
+          firstName: patientData.users?.first_name || '',
+          lastName: patientData.users?.last_name || '',
+          email: patientData.users?.email || '',
+          avatarUrl: patientData.users?.avatar_url || null,
+          phone: patientData.users?.phone || null,
+          intakeCompleted: patientData.intake_completed,
+          treatmentPlanStatus: plan.status,
+          lastUpdated: plan.updated_at,
+        });
+      }
+    });
+    patients = Array.from(patientsMap.values());
+  }
+
+  const headerTitle = showAllPatients ? 'All Patients' : 'My Patients';
+  const headerDescription = showAllPatients
+    ? `${patients.length} patient${patients.length !== 1 ? 's' : ''} in the system`
+    : `${patients.length} patient${patients.length !== 1 ? 's' : ''} under your care`;
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="My Patients"
-        description={`${patients.length} patient${patients.length !== 1 ? 's' : ''} under your care`}
+        title={headerTitle}
+        description={headerDescription}
       />
 
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Search patients..." className="pl-9" />
-        </div>
-        <Button variant="outline">Filter</Button>
-      </div>
-
-      {patients.length > 0 ? (
-        <div className="grid gap-4">
-          {patients.map((patient) => {
-            const initials = `${patient.users?.first_name?.[0] || ''}${patient.users?.last_name?.[0] || ''}`.toUpperCase();
-            return (
-              <Link key={patient.id} href={`/provider/patients/${patient.id}`}>
-                <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
-                  <CardContent className="flex items-center gap-4 p-4">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src={patient.users?.avatar_url || undefined} />
-                      <AvatarFallback>{initials || '??'}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium truncate">
-                          {patient.users?.first_name} {patient.users?.last_name}
-                        </p>
-                        {!patient.intake_completed && (
-                          <Badge variant="secondary">Intake Pending</Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground truncate">
-                        {patient.users?.email}
-                      </p>
-                      {patient.users?.phone && (
-                        <p className="text-sm text-muted-foreground">
-                          {patient.users.phone}
-                        </p>
-                      )}
-                    </div>
-                    <div className="text-right">
-                      <Badge variant={patient.treatmentPlanStatus === 'active' ? 'default' : 'secondary'}>
-                        {patient.treatmentPlanStatus}
-                      </Badge>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Updated {new Date(patient.lastUpdated).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                  </CardContent>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
-      ) : (
-        <Card>
-          <CardContent className="py-12">
-            <EmptyState
-              icon={Users}
-              title="No Patients Assigned"
-              description="Patients will appear here once they are assigned to you."
-            />
-          </CardContent>
-        </Card>
-      )}
+      <PatientList patients={patients} showAllPatients={showAllPatients} />
     </div>
   );
 }
