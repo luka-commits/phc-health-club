@@ -2,18 +2,18 @@
 
 ## Current Position
 
-Phase: 15 of 48 (Patient List & Search)
-Plan: 1 of 1 in current phase
-Status: Phase 15 complete
-Last activity: 2026-01-19 - Plan 15-01 complete, patient list with search, sort, pagination
+Phase: 16 of 48 (Patient Detail View)
+Plan: 4 of 4 in current phase
+Status: Phase 16 complete
+Last activity: 2026-01-19 - Phase 16 complete with all 4 plans (patient detail page, treatment plan tab, blood work tab, lifestyle tab)
 
-Progress: ███████████████░░░░░ 31% (15/48 phases complete)
+Progress: ████████████████░░░░ 33% (16/48 phases complete)
 
 ## Milestone Progress
 
 - v1.0 Foundation: 6/6 phases complete
 - v1.1 Patient Features: 9/9 phases complete (MILESTONE COMPLETE)
-- v1.2 Provider Features: 1/8 phases complete
+- v1.2 Provider Features: 2/8 phases complete
 - v1.3 Communication: 0/6 phases planned
 - v1.4 Automation & Integrations: 0/6 phases planned
 - v1.5 Billing & Payments: 0/6 phases planned
@@ -34,6 +34,8 @@ Progress: ███████████████░░░░░ 31% (15/4
 - Separate tables for lifestyle_notes (text) and body_metrics (numeric)
 - Body measurements stored in imperial units (lbs, inches)
 - Provider patient list: MD/Admin see all, PA/NP see assigned only
+- Patient detail page: provider-facing view reuses patient components (read-only)
+- Intake form data displayed with intelligent grouping and smart type rendering
 
 ### Technical Discoveries
 - Next.js 16 uses Turbopack
@@ -45,6 +47,7 @@ Progress: ███████████████░░░░░ 31% (15/4
 - Recharts + React 19: requires react-is@19.2.3 with overrides in package.json
 - Recharts components MUST be client components ("use client" directive)
 - Client-side search: use debounced state (300ms) with useMemo for filtering
+- Lucide icons: title prop not supported, use wrapping span with title attribute
 
 ### Blockers/Concerns
 - None currently
@@ -75,10 +78,11 @@ Progress: ███████████████░░░░░ 31% (15/4
   - Phase 48 added: Gamification & Engagement (Vision Board, badges, streaks)
   - Enhanced Phase 23: Provider vacation/backup handling
 - Phase 15 complete: Patient List & Search with role-based visibility
+- Phase 16 complete: Patient Detail View with all tabs (4 plans in 2 waves)
 
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Phase 15 complete - Patient List with search, sort, pagination
+Stopped at: Phase 16 complete - Patient Detail View with Overview, Treatment Plan, Blood Work, Lifestyle tabs
 Resume file: None
-Next: Phase 16 (Patient Detail View)
+Next: Phase 17 (Treatment Plan Editor)
