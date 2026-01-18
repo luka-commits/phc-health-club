@@ -106,3 +106,18 @@ export interface TreatmentPlanData {
   nutrition?: NutritionData | null;
   training?: TrainingData | null;
 }
+
+// ============================================
+// Update Input Type (for server actions)
+// ============================================
+
+export interface TreatmentPlanUpdateInput {
+  treatmentPlanId: string;
+  lifestyle_behaviors?: LifestyleData | null;
+  nutrition?: NutritionData | null;
+  training?: TrainingData | null;
+  prescriptions_data?: PrescriptionItem[] | null;
+  peptides_data?: PeptideItem[] | null;
+  supplements_data?: SupplementItem[] | null;
+  notes?: string | null;
+}

@@ -1,7 +1,8 @@
 'use client';
 
 import { format } from 'date-fns';
-import { FileText, Check, ChevronDown, ChevronUp, Pill, FlaskConical, Leaf } from 'lucide-react';
+import Link from 'next/link';
+import { FileText, Check, ChevronDown, ChevronUp, Pill, FlaskConical, Leaf, Edit2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,9 +20,10 @@ interface TreatmentPlanWithProvider extends TreatmentPlan {
 
 interface TreatmentPlanTabProps {
   treatmentPlan: TreatmentPlanWithProvider | null;
+  patientId: string;
 }
 
-export function TreatmentPlanTab({ treatmentPlan }: TreatmentPlanTabProps) {
+export function TreatmentPlanTab({ treatmentPlan, patientId }: TreatmentPlanTabProps) {
   const [prescriptionsOpen, setPrescriptionsOpen] = useState(false);
   const [peptidesOpen, setPeptidesOpen] = useState(false);
   const [supplementsOpen, setSupplementsOpen] = useState(false);
@@ -35,6 +37,14 @@ export function TreatmentPlanTab({ treatmentPlan }: TreatmentPlanTabProps) {
             title="No Active Treatment Plan"
             description="Create a treatment plan for this patient."
           />
+          <div className="flex justify-center mt-4">
+            <Button asChild>
+              <Link href={`/provider/patients/${patientId}/treatment-plan`}>
+                <Edit2 className="h-4 w-4 mr-2" />
+                Create Treatment Plan
+              </Link>
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );
@@ -62,9 +72,17 @@ export function TreatmentPlanTab({ treatmentPlan }: TreatmentPlanTabProps) {
               <CardTitle>Treatment Plan Overview</CardTitle>
               <CardDescription>Managed by {providerName}</CardDescription>
             </div>
-            <Badge variant={treatmentPlan.status === 'active' ? 'default' : 'secondary'}>
-              {treatmentPlan.status}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Button variant="secondary" size="sm" asChild>
+                <Link href={`/provider/patients/${patientId}/treatment-plan`}>
+                  <Edit2 className="h-4 w-4 mr-2" />
+                  Edit Treatment Plan
+                </Link>
+              </Button>
+              <Badge variant={treatmentPlan.status === 'active' ? 'default' : 'secondary'}>
+                {treatmentPlan.status}
+              </Badge>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">

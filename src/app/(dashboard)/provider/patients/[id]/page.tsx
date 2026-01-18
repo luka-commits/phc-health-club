@@ -266,7 +266,7 @@ export default async function PatientDetailPage({ params }: PatientDetailPagePro
         </TabsContent>
 
         <TabsContent value="treatment-plan" className="space-y-6">
-          <TreatmentPlanTab treatmentPlan={treatmentPlan} />
+          <TreatmentPlanTab treatmentPlan={treatmentPlan} patientId={patientId} />
           <PrescriptionsList prescriptions={prescriptions} />
         </TabsContent>
 

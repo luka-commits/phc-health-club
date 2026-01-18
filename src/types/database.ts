@@ -94,6 +94,8 @@ export interface TreatmentPlan {
   peptides_data: Record<string, unknown> | null;
   supplements_data: Record<string, unknown> | null;
   notes: string | null;
+  sent_to_patient_at: string | null;
+  patient_signed_off_at: string | null;
   created_at: string;
   updated_at: string;
 }
