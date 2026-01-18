@@ -7,7 +7,7 @@ Von der Grundstruktur zur vollständigen Telemedizin-Plattform mit Patient-, Pro
 ## Milestones
 
 - ✅ **v1.0 Foundation** - Phases 1-6 (shipped 2025-01-18)
-- 🚧 **v1.1 Patient Features** - Phases 7-14 + 11.5 (in progress)
+- ✅ **v1.1 Patient Features** - Phases 7-14 + 11.5 (shipped 2026-01-19)
 - 📋 **v1.2 Provider Features** - Phases 15-22 (planned)
 - 📋 **v1.3 Communication** - Phases 23-28 (planned)
 - 📋 **v1.4 Automation & Integrations** - Phases 29-34 (planned)
@@ -45,7 +45,7 @@ Von der Grundstruktur zur vollständigen Telemedizin-Plattform mit Patient-, Pro
 
 </details>
 
-### 🚧 v1.1 Patient Features (In Progress)
+### ✅ v1.1 Patient Features (Shipped 2026-01-19)
 
 **Milestone Goal:** Komplettes Patient-Portal mit Profil, Treatment Plan, Blutwerten, Produktkatalog, Lifestyle Notes und Kalendern
 
@@ -560,7 +560,7 @@ Von der Grundstruktur zur vollständigen Telemedizin-Plattform mit Patient-, Pro
 | 11.5. Performance & Fitness | v1.1 | 2/2 | Complete | 2026-01-18 |
 | 12. Product Catalog Enhanced | v1.1 | 2/2 | Complete | 2026-01-18 |
 | 13. Refill Calendar & Auto-Refill Toggles | v1.1 | 1/1 | Complete | 2026-01-18 |
-| 14. Blood Work Schedule Calendar | v1.1 | 0/? | Not started | - |
+| 14. Blood Work Schedule Calendar | v1.1 | 2/2 | Complete | 2026-01-19 |
 | 15. Patient List & Search | v1.2 | 0/? | Not started | - |
 | 16. Patient Detail View | v1.2 | 0/? | Not started | - |
 | 17. Treatment Plan Editor | v1.2 | 0/? | Not started | - |
