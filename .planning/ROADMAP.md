@@ -561,7 +561,7 @@ Von der Grundstruktur zur vollständigen Telemedizin-Plattform mit Patient-, Pro
 | 12. Product Catalog Enhanced | v1.1 | 2/2 | Complete | 2026-01-18 |
 | 13. Refill Calendar & Auto-Refill Toggles | v1.1 | 1/1 | Complete | 2026-01-18 |
 | 14. Blood Work Schedule Calendar | v1.1 | 2/2 | Complete | 2026-01-19 |
-| 15. Patient List & Search | v1.2 | 0/? | Not started | - |
+| 15. Patient List & Search | v1.2 | 1/1 | Complete | 2026-01-19 |
 | 16. Patient Detail View | v1.2 | 0/? | Not started | - |
 | 17. Treatment Plan Editor | v1.2 | 0/? | Not started | - |
 | 18. Blood Work Entry & Schedule | v1.2 | 0/? | Not started | - |

@@ -2,18 +2,18 @@
 
 ## Current Position
 
-Phase: 14 of 48 (Blood Work Schedule)
-Plan: 2 of 2 in current phase
-Status: Phase 14 complete - v1.1 Patient Features milestone complete
-Last activity: 2026-01-19 - Plan 14-02 verification approved, phase complete
+Phase: 15 of 48 (Patient List & Search)
+Plan: 1 of 1 in current phase
+Status: Phase 15 complete
+Last activity: 2026-01-19 - Plan 15-01 complete, patient list with search, sort, pagination
 
-Progress: ██████████████░░░░░░ 29% (14/48 phases complete)
+Progress: ███████████████░░░░░ 31% (15/48 phases complete)
 
 ## Milestone Progress
 
 - v1.0 Foundation: 6/6 phases complete
 - v1.1 Patient Features: 9/9 phases complete (MILESTONE COMPLETE)
-- v1.2 Provider Features: 0/8 phases planned
+- v1.2 Provider Features: 1/8 phases complete
 - v1.3 Communication: 0/6 phases planned
 - v1.4 Automation & Integrations: 0/6 phases planned
 - v1.5 Billing & Payments: 0/6 phases planned
@@ -33,6 +33,7 @@ Progress: ██████████████░░░░░░ 29% (14/4
 - Reusable server actions in src/lib/actions/ (vs page-specific in route folders)
 - Separate tables for lifestyle_notes (text) and body_metrics (numeric)
 - Body measurements stored in imperial units (lbs, inches)
+- Provider patient list: MD/Admin see all, PA/NP see assigned only
 
 ### Technical Discoveries
 - Next.js 16 uses Turbopack
@@ -73,10 +74,11 @@ Progress: ██████████████░░░░░░ 29% (14/4
   - Phase 33 enhanced: HIPAA audit logging
   - Phase 48 added: Gamification & Engagement (Vision Board, badges, streaks)
   - Enhanced Phase 23: Provider vacation/backup handling
+- Phase 15 complete: Patient List & Search with role-based visibility
 
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Phase 14 complete - v1.1 Patient Features milestone complete
+Stopped at: Phase 15 complete - Patient List with search, sort, pagination
 Resume file: None
-Next: v1.2 Provider Features (Phase 15)
+Next: Phase 16 (Patient Detail View)
